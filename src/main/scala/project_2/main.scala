@@ -76,13 +76,13 @@ object main{
       this(Set((s, z_of_s )) , z_of_s, bucket_size_in)
     }
 
-    def +(that: BJKSTSketch): BJKSTSketch = {    /* Merging two sketches */
+    /*def +(that: BJKSTSketch): BJKSTSketch = {    /* Merging two sketches */ */
 
-    }
+    /*}*/
 
-    def add_string(s: String, z_of_s: Int): BJKSTSketch = {   /* add a string to the sketch */
+    /*def add_string(s: String, z_of_s: Int): BJKSTSketch = {   /* add a string to the sketch */ */
 
-    }
+    /*} */
   }
 
 
@@ -100,12 +100,36 @@ object main{
 
 
   def BJKST(x: RDD[String], width: Int, trials: Int) : Double = {
-
+    return 2
   }
 
 
   def Tug_of_War(x: RDD[String], width: Int, depth:Int) : Long = {
+    // Generate width * depth hash functions
+    val hashFunctions = Array.fill(width * depth)(new four_universal_Radamacher_hash_function())
 
+    // Apply each hash function to the data and sum the results
+    val sketches = x.flatMap { s =>
+      hashFunctions.indices.map { i =>
+        (i % depth, if (hashFunctions(i).hash(s) == 1) 1 else -1)
+      }
+    }.reduceByKey(_ + _)
+      .map { case (group, sum) => (group, sum * sum) } // square the sums as we're estimating F2
+      .groupByKey()
+      .mapValues { sums =>
+        // Compute the mean of squared sums for each group
+        val sumsArray = sums.toArray
+        sumsArray.sum / sumsArray.length.toDouble
+      }.collect()
+
+    // Calculate the median of the means
+    val means = sketches.sortBy(_._1).map(_._2)
+    val median = if (means.length % 2 == 0)
+      (means(means.length / 2 - 1) + means(means.length / 2)) / 2.0
+    else
+      means(means.length / 2)
+
+    return median.toLong
   }
 
 
@@ -116,7 +140,7 @@ object main{
 
 
   def exact_F2(x: RDD[String]) : Long = {
-
+      return x.map(s => (s, 1L)).reduceByKey(_ + _).map(_._2).map(fs => fs * fs).reduce(_ + _)
   }
 
 
@@ -131,7 +155,7 @@ object main{
     val input_path = args(0)
 
   //    val df = spark.read.format("csv").load("data/2014to2017.csv")
-    val df = spark.read.format("csv").load(input_path)
+    val df = spark.read.format("csv").load("C:/Users/Peter/OneDrive/Documents/project_2/2014to2017.csv")
     val dfrdd = df.rdd.map(row => row.getString(0))
 
     val startTimeMillis = System.currentTimeMillis()
