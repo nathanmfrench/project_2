@@ -63,27 +63,32 @@ object main{
     }
   }
 
-  class BJKSTSketch(bucket_in: Set[(String, Int)] ,  z_in: Int, bucket_size_in: Int) extends Serializable {
-/* A constructor that requies intialize the bucket and the z value. The bucket size is the bucket size of the sketch. */
+ /* class BJKSTSketch(bucket_in: Set[(String, Int)], z_in: Int, bucket_size_in: Int) extends Serializable {
+    /* A constructor that requies intialize the bucket and the z value. The bucket size is the bucket size of the sketch. */
 
     var bucket: Set[(String, Int)] = bucket_in
     var z: Int = z_in
 
-    val BJKST_bucket_size = bucket_size_in;
+    val bucketSize = bucket_size_in;
 
-    def this(s: String, z_of_s: Int, bucket_size_in: Int){
+    def this(s: String, z_of_s: Int, bucket_size_in: Int) {
       /* A constructor that allows you pass in a single string, zeroes of the string, and the bucket size to initialize the sketch */
-      this(Set((s, z_of_s )) , z_of_s, bucket_size_in)
+      this(Set((s, z_of_s)), z_of_s, bucket_size_in)
     }
 
-    /*def +(that: BJKSTSketch): BJKSTSketch = {    /* Merging two sketches */ */
+    def +(that: BJKSTSketch): BJKSTSketch = {
 
-    /*}*/
+    }
 
-    /*def add_string(s: String, z_of_s: Int): BJKSTSketch = {   /* add a string to the sketch */ */
+    def addString(s: String, z_of_s: Int): BJKSTSketch = {
 
-    /*} */
-  }
+    }
+
+    def ans(): Double = {
+
+    }
+
+  }*/
 
 
   def tidemark(x: RDD[String], trials: Int): Double = {
@@ -99,9 +104,9 @@ object main{
   }
 
 
-  def BJKST(x: RDD[String], width: Int, trials: Int) : Double = {
+  /*def BJKST(x: RDD[String], width: Int, trials: Int): Double = {
     return 2
-  }
+  }*/
 
 
   def Tug_of_War(x: RDD[String], width: Int, depth:Int) : Long = {
@@ -155,13 +160,13 @@ object main{
     val input_path = args(0)
 
   //    val df = spark.read.format("csv").load("data/2014to2017.csv")
-    val df = spark.read.format("csv").load("C:/Users/Peter/OneDrive/Documents/project_2/2014to2017.csv")
+    val df = spark.read.format("csv").load("C:/Users/Peter/OneDrive/Documents/project_2/test.csv")
     val dfrdd = df.rdd.map(row => row.getString(0))
 
     val startTimeMillis = System.currentTimeMillis()
 
     if(args(1)=="BJKST") {
-      if (args.length != 4) {
+      /*if (args.length != 4) {
         println("Usage: project_2 input_path BJKST #buckets trials")
         sys.exit(1)
       }
@@ -172,7 +177,7 @@ object main{
 
       println("==================================")
       println("BJKST Algorithm. Bucket Size:"+ args(2) + ". Trials:" + args(3) +". Time elapsed:" + durationSeconds + "s. Estimate: "+ans)
-      println("==================================")
+      println("==================================")*/
     }
     else if(args(1)=="tidemark") {
       if(args.length != 3) {
